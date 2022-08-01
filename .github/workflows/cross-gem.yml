@@ -1,0 +1,40 @@
+# Adjust this based on your release workflow
+name: Cross Gem
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  set_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(curl -s https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/derived/github-actions-matrix.json | jq -cr)"
+  cross_gems:
+    name: Cross compile gems
+    needs: set_matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJSON(needs.set_matrix.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+
+      - run: bundle package --all
+
+      - uses: oxidize-rb/cross-gem-action@v5
+        with:
+          platform: ${{ matrix['ruby-platform'] }}
+          version: "0.9.28"
+          env: |
+            RUBY_CC_VERSION=3.1.0
+          setup: |
+            bundle --local
