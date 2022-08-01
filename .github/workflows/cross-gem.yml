@@ -30,10 +30,10 @@ jobs:
 
       - run: bundle package --all
 
-      - uses: oxidize-rb/cross-gem-action@v5
+      - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix['ruby-platform'] }}
-          version: "0.9.28"
+          use-ruby-linker-for-cargo: "true"
           env: |
             RUBY_CC_VERSION=3.1.0
           setup: |
