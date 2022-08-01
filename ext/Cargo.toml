@@ -1,0 +1,13 @@
+[package]
+name = "ext"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ian Ker-Seymer <hello@ianks.com>"]
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+rb-sys = { version = "0.9", features = ["gem", "global-allocator"] }

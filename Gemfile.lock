@@ -1,0 +1,27 @@
+PATH
+  remote: .
+  specs:
+    oxi-test (0.1.0)
+      rb_sys
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.16.2)
+    rake (13.0.6)
+    rake-compiler (1.2.0)
+      rake
+    rb_sys (0.9.28)
+
+PLATFORMS
+  arm64-darwin-21
+
+DEPENDENCIES
+  minitest
+  oxi-test!
+  rake (~> 13.0)
+  rake-compiler
+  rb_sys
+
+BUNDLED WITH
+   2.3.7
