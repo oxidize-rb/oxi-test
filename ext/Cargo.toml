@@ -10,4 +10,4 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-rb-sys = { version = "0.9", features = ["gem", "global-allocator"] }
+rb-sys = { version = "0.9", features = ["gem"] }
