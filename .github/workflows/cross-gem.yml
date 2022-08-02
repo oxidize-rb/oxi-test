@@ -39,6 +39,6 @@ jobs:
             export RUBY_CC_VERSION=3.1.0
             export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
             export CARGO_TARGET_ARM_UNKNOWN_LINUX_GNU_LINKER=arm-linux-gnueabihf-gcc
-            export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=86_64-w64-mingw32-gcc
+            export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=x86_64-w64-mingw32-gcc
 
             bundle exec rake native:${{ matrix['ruby-platform'] }} gem
