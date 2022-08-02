@@ -6,20 +6,19 @@ on:
     branches: ["main"]
 
 jobs:
-  set_matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - id: set-matrix
-        run: echo "::set-output name=matrix::$(curl -s https://raw.githubusercontent.com/oxidize-rb/rb-sys/main/data/derived/github-actions-matrix.json | jq -cr)"
   cross_gems:
     name: Cross compile gems
-    needs: set_matrix
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{fromJSON(needs.set_matrix.outputs.matrix)}}
+      strategy:
+        fail-fast: false
+        matrix: 
+          ruby-platform:
+            - "arm-linux"
+            - "aarch64-linux"
+            - "arm64-darwin"
+            - "x64-mingw-ucrt"
+            - "x86_64-darwin"
+            - "x86_64-linux"
     steps:
       - uses: actions/checkout@v3
 
@@ -36,7 +35,6 @@ jobs:
           setup: |
             bundle --local
           command: |
-            export RUBY_CC_VERSION=3.1.0
             export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
             export CARGO_TARGET_ARM_UNKNOWN_LINUX_GNU_LINKER=arm-linux-gnueabihf-gcc
             export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=x86_64-w64-mingw32-gcc
