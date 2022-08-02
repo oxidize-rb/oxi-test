@@ -9,16 +9,16 @@ jobs:
   cross_gems:
     name: Cross compile gems
     runs-on: ubuntu-latest
-      strategy:
-        fail-fast: false
-        matrix: 
-          ruby-platform:
-            - "arm-linux"
-            - "aarch64-linux"
-            - "arm64-darwin"
-            - "x64-mingw-ucrt"
-            - "x86_64-darwin"
-            - "x86_64-linux"
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-platform:
+          - "arm-linux"
+          - "aarch64-linux"
+          - "arm64-darwin"
+          - "x64-mingw-ucrt"
+          - "x86_64-darwin"
+          - "x86_64-linux"
     steps:
       - uses: actions/checkout@v3
 
