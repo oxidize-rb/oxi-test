@@ -25,13 +25,11 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.1"
-          bundler-cache: true
-
-      - run: bundle package --all
+          bundler-cache: false
 
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix['ruby-platform'] }}
           command: |
-            bundle --local
+            bundle install
             rake native:${{ matrix['ruby-platform'] }} gem
