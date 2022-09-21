@@ -22,6 +22,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix['ruby-platform'] }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: cross-gem
+          path: pkg/*.gem
