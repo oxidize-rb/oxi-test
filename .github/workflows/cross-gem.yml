@@ -32,3 +32,5 @@ jobs:
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix['ruby-platform'] }}
+          setup: |
+            rvm all do bundle --local
