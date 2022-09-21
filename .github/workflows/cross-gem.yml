@@ -23,13 +23,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.1"
-          bundler-cache: false
 
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix['ruby-platform'] }}
-          command: |
-            bundle install
-            rake native:${{ matrix['ruby-platform'] }} gem
