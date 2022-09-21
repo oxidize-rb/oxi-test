@@ -33,5 +33,4 @@ jobs:
         with:
           platform: ${{ matrix['ruby-platform'] }}
           command: |
-            rvm all do bundle install;
-            bundle exec rake native:${{ matrix['ruby-platform'] }} gem;
+            rake native:${{ matrix['ruby-platform'] }} gem
