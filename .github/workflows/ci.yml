@@ -9,19 +9,37 @@ on:
   pull_request:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+  ci:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         ruby: ["2.6", "2.7", "3.0", "3.1", "head"]
-
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Setup rust cache
+        uses: Swatinem/rust-cache@v2
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Run the default task
+
+      - name: Setup compile cache
+        uses: actions/cache@v3
+        with:
+          path: tmp/
+          key: compile-v0-${{ runner.os }}-${{ matrix.ruby }}-${{ hashFiles('**/Cargo.lock', '**/extconf.rb', '**/Gemfile.lock') }}
+
+      - name: Run ruby tests
         run: bundle exec rake
+
+      - name: Lint rust
+        run: cargo clippy && cargo fmt --check

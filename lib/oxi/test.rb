@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 require_relative "test/version"
-require_relative "test/ext"
+
+begin
+  RUBY_VERSION =~ /(\d+\.\d+)/
+  require "#{$1}/test/ext"
+rescue LoadError
+  require "test/ext"
+end
 
 module Oxi
   module Test
