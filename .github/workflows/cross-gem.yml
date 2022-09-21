@@ -42,8 +42,3 @@ jobs:
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix['ruby-platform'] }}
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cross-gems-${{ github.event.repository.name }}-${{ github.sha }}
-          path: pkg/**/*-${{ matrix['ruby-platform'] }}.gem
