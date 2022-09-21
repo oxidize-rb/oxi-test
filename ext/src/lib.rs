@@ -1,6 +1,6 @@
 use rb_sys::{
-    rb_define_module, rb_define_module_under, rb_define_singleton_method, rb_str_buf_append,
-    rb_utf8_str_new_cstr, VALUE,
+    rb_define_module, rb_define_module_under, rb_define_singleton_method, rb_protect,
+    rb_str_buf_append, rb_utf8_str_new_cstr, VALUE,
 };
 use std::{ffi::CString, intrinsics::transmute, os::raw::c_char};
 
@@ -9,6 +9,7 @@ trait AsCStr {
 }
 
 impl AsCStr for str {
+    /// Convert a Rust string to a C string.
     fn as_cstr(&self) -> *const c_char {
         CString::new(self).unwrap().into_raw()
     }
