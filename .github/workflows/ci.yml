@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: oxidize-rb/setup-ruby-and-rust@main
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
 
       - name: Setup compile cache
         uses: actions/cache@v3
@@ -31,5 +31,3 @@ jobs:
 
       - name: Lint rust
         run: cargo clippy && cargo fmt --check
-        with:
-          shared-key: ${{ inputs.cache-version }}
