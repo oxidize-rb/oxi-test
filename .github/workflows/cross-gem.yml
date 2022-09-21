@@ -33,4 +33,4 @@ jobs:
         with:
           platform: ${{ matrix['ruby-platform'] }}
           setup: |
-            rvm all do bundle --local
+            rvm all do bundle install
