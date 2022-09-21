@@ -33,4 +33,5 @@ jobs:
         with:
           platform: ${{ matrix['ruby-platform'] }}
           command: |
+            bundle --local
             rake native:${{ matrix['ruby-platform'] }} gem
