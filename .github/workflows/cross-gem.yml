@@ -26,11 +26,24 @@ jobs:
         with:
           ruby-version: "3.1"
 
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Compile cache
+        uses: actions/cache@v3
+        with:
+          path: tmp/${{ matrix['ruby-platform'] }}/
+          key: cross-gem-v0-${{ matrix['ruby-platform'] }}-${{ hashFiles('**/Cargo.lock', '**/extconf.rb', '**/Gemfile.lock') }}
+
+      - name: Vendor cargo deps
+        run: mkdir .cargo && cargo vendor $PWD/tmp/cargo-vendor >> .cargo/config.toml
+
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix['ruby-platform'] }}
 
       - uses: actions/upload-artifact@v3
         with:
-          name: cross-gem
-          path: pkg/*.gem
+          name: cross-gems-${{ github.event.repository.name }}-${{ github.sha }}
+          path: pkg/**/*-${{ matrix['ruby-platform'] }}.gem
