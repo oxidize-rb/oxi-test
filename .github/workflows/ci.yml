@@ -22,13 +22,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-          rust-cache: true
-
-      - name: Setup compile cache
-        uses: actions/cache@v3
-        with:
-          path: tmp/
-          key: compile-v0-${{ runner.os }}-${{ matrix.ruby }}-${{ hashFiles('**/Cargo.lock', '**/extconf.rb', '**/Gemfile.lock') }}
+          cargo-cache: true
 
       - name: Run ruby tests
         run: bundle exec rake
