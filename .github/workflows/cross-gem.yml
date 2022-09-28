@@ -17,28 +17,20 @@ jobs:
           - "aarch64-linux"
           - "arm64-darwin"
           - "x64-mingw-ucrt"
+          - "x64-mingw32"
           - "x86_64-darwin"
           - "x86_64-linux"
     steps:
       - uses: actions/checkout@v3
 
-      - uses: ruby/setup-ruby-pkgs@v1
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
         with:
           ruby-version: "3.1"
-
-      - uses: dtolnay/rust-toolchain@stable
-
-      - uses: Swatinem/rust-cache@v2
-
-      - name: Compile cache
-        uses: actions/cache@v3
-        with:
-          path: tmp/${{ matrix['ruby-platform'] }}/
-          key: cross-gem-v0-${{ matrix['ruby-platform'] }}-${{ hashFiles('**/Cargo.lock', '**/extconf.rb', '**/Gemfile.lock') }}
-
-      - name: Vendor cargo deps
-        run: mkdir .cargo && cargo vendor $PWD/tmp/cargo-vendor >> .cargo/config.toml
+          bundler-cache: false
+          cargo-cache: true
+          cargo-vendor: true
+          cache-version: v1
 
       - uses: oxidize-rb/cross-gem-action@v6
         with:
-          platform: ${{ matrix['ruby-platform'] }}
+          platform: ${{ matrix.ruby-platform }}
