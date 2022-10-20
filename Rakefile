@@ -13,7 +13,8 @@ CROSS_PLATFORMS = [
   "x64-mingw-ucrt",
   "x64-mingw32",
   "x86_64-darwin",
-  "x86_64-linux"
+  "x86_64-linux",
+  "x86_64-linux-musl"
 ]
 
 Rake::TestTask.new(:test) do |t|

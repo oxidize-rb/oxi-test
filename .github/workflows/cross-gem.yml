@@ -20,6 +20,7 @@ jobs:
           - "x64-mingw32"
           - "x86_64-darwin"
           - "x86_64-linux"
+          - "x86_64-linux-musl"
     steps:
       - uses: actions/checkout@v3
 
@@ -34,3 +35,4 @@ jobs:
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix.ruby-platform }}
+          version: "0.9.32" # x86_64-linux-musl requires 0.9.32 or higher
