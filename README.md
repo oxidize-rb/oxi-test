@@ -7,7 +7,7 @@ Use this as inspiration for your own Rust gems.
 
 ## Features
 
-✅ Binary Gems for 7 Platforms ([code](Rakefile))
+✅ Binary Gems for 8 Platforms ([code](Rakefile))
 ✅ GitHub Actions CI ([code](.github/workflows/ci.yml))
 ✅ GitHub Actions Cross Compilation ([code](.github/workflows/cross-gem.yml))
 
