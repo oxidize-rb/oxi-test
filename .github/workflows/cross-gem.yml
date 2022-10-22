@@ -35,4 +35,4 @@ jobs:
       - uses: oxidize-rb/cross-gem-action@v6
         with:
           platform: ${{ matrix.ruby-platform }}
-          version: "0.9.32" # x86_64-linux-musl requires 0.9.32 or higher
+          version: "0.9.34"
