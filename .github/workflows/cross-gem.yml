@@ -3,7 +3,7 @@ name: Cross Gem
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: ["main", "cross-gem/*"]
 
 jobs:
   cross_gems:
@@ -32,7 +32,7 @@ jobs:
           cargo-vendor: true
           cache-version: v1
 
-      - uses: oxidize-rb/cross-gem-action@v6
+      - uses: oxidize-rb/cross-gem-action@ruby-cc-version
         with:
           platform: ${{ matrix.ruby-platform }}
-          version: "0.9.34"
+          ruby-versions: "3.1, 3.0, 2.7"
