@@ -104,15 +104,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "linkify"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96dd5884008358112bc66093362197c7248ece00d46624e2cf71e50029f8cff5"
-dependencies = [
- "memchr",
-]
-
-[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -160,21 +151,20 @@ dependencies = [
 
 [[package]]
 name = "rb-sys"
-version = "0.9.31"
+version = "0.9.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfc41b26ea88da6100f538d31467941e41ab0c002999d687315e67d3b371b796"
+checksum = "0881deab3a2a339b0398b503978f988603476dcdf86512b88e827e1382e65af5"
 dependencies = [
- "bindgen",
- "linkify",
  "rb-sys-build",
 ]
 
 [[package]]
 name = "rb-sys-build"
-version = "0.9.31"
+version = "0.9.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79be4233eabd2bf9e19eb8116391aeaf4b89b87a7ab38e0ded44de9158006e46"
+checksum = "a44ad2dec7fee6f2154f1682420b5d144fb85ed1f30750d995aec57a96e74aeb"
 dependencies = [
+ "bindgen",
  "regex",
  "shell-words",
 ]
