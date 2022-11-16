@@ -1,4 +1,6 @@
+---
 # Adjust this based on your release workflow
+# 👋 Look here for another good example: https://github.com/bytecodealliance/wasmtime-rb/tree/main/.github/workflows
 name: Cross Gem
 on:
   workflow_dispatch:
@@ -6,33 +8,41 @@ on:
     branches: ["main", "cross-gem/*"]
 
 jobs:
+  ci-data:
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.fetch.outputs.result }}
+    steps:
+      # This compiles for all supported Ruby cross-compilation platforms.
+      # Honestly, it's a bit overkill for most.
+      - id: fetch
+        uses: oxidize-rb/actions/fetch-ci-data@main
+        with:
+          supported-ruby-platforms: |
+            exclude: []
+
   cross_gems:
     name: Cross compile gems
+    needs: ci-data
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        ruby-platform:
-          - "arm-linux"
-          - "aarch64-linux"
-          - "arm64-darwin"
-          - "x64-mingw-ucrt"
-          - "x64-mingw32"
-          - "x86_64-darwin"
-          - "x86_64-linux"
-          - "x86_64-linux-musl"
+        ruby-platform: ${{ fromJSON(needs.ci-data.outputs.result).supported-ruby-platforms }}
     steps:
       - uses: actions/checkout@v3
 
       - uses: oxidize-rb/actions/setup-ruby-and-rust@main
         with:
           ruby-version: "3.1"
-          bundler-cache: false
+          bundler-cache: false # This is *important* because rake-compiler-dock bundler has conflicts...
           cargo-cache: true
           cargo-vendor: true
-          cache-version: v1
+          cache-version: v1-${{ matrix.ruby-platform }}
 
       - uses: oxidize-rb/cross-gem-action@main
         with:
           platform: ${{ matrix.ruby-platform }}
+          # This is a slightly absurd minimum Ruby version policy, but it works.
+          # Most gems probably should not be this lienient.
           ruby-versions: "3.1, 3.0, 2.7, 2.6, 2.5, 2.4, 2.3"

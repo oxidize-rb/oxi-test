@@ -15,6 +15,13 @@ impl AsCStr for str {
     }
 }
 
+// ⚠️ The `rb-sys` crate is a low level library. If you are looking to write a gem in
+// Rust, you should probably use https://github.com/matsadler/magnus instead. It is powered
+// by `rb-sys` and provides a higher level API, you get all of the
+// cross-platform compatibility goodnees of `rb-sys`.
+//
+// If you do need to drop down into raw libruby, you can enable the
+// `rb-sys-interop` feature and add `rb-sys` to you Cargo dependencies.
 unsafe extern "C" fn hello(_: VALUE, name: VALUE) -> VALUE {
     rb_str_buf_append(rb_utf8_str_new_cstr("Hello, ".as_cstr()), name)
 }
