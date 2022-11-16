@@ -9,12 +9,26 @@ on:
   pull_request:
 
 jobs:
+  ci-data:
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.fetch.outputs.result }}
+    steps:
+      - id: fetch
+        uses: oxidize-rb/actions/fetch-ci-data@main
+        with:
+          stable-ruby-versions: |
+            exclude: []
   ci:
     runs-on: ${{ matrix.os }}
+    needs: ci-data
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        ruby: ["2.6", "2.7", "3.0", "3.1", "head"]
+        ruby: ${{ fromJSON(needs.ci-data.outputs.result).stable-ruby-versions }}
+        include:
+          - os: windows-latest
+            ruby: mswin
     steps:
       - uses: actions/checkout@v3
 
@@ -32,6 +46,7 @@ jobs:
         run: cargo clippy && cargo fmt --check
 
       - name: Test source gem
+        shell: bash
         run: |
           bundle exec rake build
           gem install --verbose pkg/*.gem
