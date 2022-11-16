@@ -30,3 +30,15 @@ jobs:
 
       - name: Lint rust
         run: cargo clippy && cargo fmt --check
+
+      - name: Test source gem
+        run: |
+          bundle exec rake build
+          gem install --verbose pkg/*.gem
+
+          if ruby -roxi/test -e "puts Oxi::Test.hello('world!')" | grep "Hello, world!"; then
+            echo "Success"
+          else
+            echo "Failure"
+            exit 1
+          fi
