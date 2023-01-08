@@ -17,11 +17,17 @@ CROSS_PLATFORMS = [
   "x86_64-linux-musl"
 ]
 
-Rake::TestTask.new(:test) do |t|
+Rake::TestTask.new(:ruby_test) do |t|
   t.libs << "test"
   t.libs << "lib"
   t.test_files = FileList["test/**/*_test.rb"]
 end
+
+task :cargo_test do
+  sh "cargo test"
+end
+
+task test: [:ruby_test, :cargo_test]
 
 Rake::ExtensionTask.new("ext", GEMSPEC) do |ext|
   ext.lib_dir = "lib/oxi/test"

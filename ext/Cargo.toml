@@ -11,3 +11,9 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rb-sys = { version = "0.9" }
+
+[dev-dependencies]
+rb-sys = { version = "0.9", features = ["link-ruby"] }
+
+[build-dependencies]
+rb-sys-env = { version = "0.1" }
