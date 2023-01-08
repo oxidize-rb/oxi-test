@@ -44,6 +44,7 @@ unsafe extern "C" fn Init_ext() {
 #[cfg(test)]
 mod tests {
     use crate::{AsCStr, Init_ext};
+    use std::os::raw::c_char;
 
     // By default, Cargo will run tests in parallel. This *will* segfault the
     // Ruby VM. In this simple example we are only writing a single test, but if
@@ -51,7 +52,12 @@ mod tests {
     // environment (or .cargo/config.toml).
     #[test]
     fn test_simple_hello() {
+        let argv: [*mut c_char; 0] = [];
+        let argv = argv.as_ptr();
+        let mut argc = 1;
+
         unsafe {
+            rb_sys::ruby_sysinit(&mut argc, argv as _);
             rb_sys::ruby_init();
 
             Init_ext();
