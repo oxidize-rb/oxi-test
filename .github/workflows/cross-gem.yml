@@ -14,7 +14,6 @@ jobs:
       result: ${{ steps.fetch.outputs.result }}
     steps:
       # This compiles for all supported Ruby cross-compilation platforms.
-      # Honestly, it's a bit overkill for most.
       - id: fetch
         uses: oxidize-rb/actions/fetch-ci-data@main
         with:
@@ -45,4 +44,4 @@ jobs:
           platform: ${{ matrix.ruby-platform }}
           # This is a slightly absurd minimum Ruby version policy, but it works.
           # Most gems probably should not be this lienient.
-          ruby-versions: "3.1, 3.0, 2.7, 2.6, 2.5, 2.4, 2.3"
+          ruby-versions: "3.2, 3.1, 3.0, 2.7, 2.6, 2.5, 2.4, 2.3"
