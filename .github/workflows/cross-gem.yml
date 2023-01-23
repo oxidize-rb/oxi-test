@@ -59,6 +59,9 @@ jobs:
           docker run -v $PWD/tmp/rubies:/tmp/rubies --rm rbsys/${{ matrix.ruby-platform }}:latest \
             cp -R /usr/local/rake-compiler/ruby /tmp/rubies
 
+          sudo chown -R $USER:$USER tmp/rubies
+          rm -rf tmp/rubies/**/*.rb
+
       - name: Rubies
         uses: actions/upload-artifact@v2
         with:
