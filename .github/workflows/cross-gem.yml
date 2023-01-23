@@ -51,3 +51,16 @@ jobs:
         with:
           name: bindings
           path: tmp/**/bindings.rs
+
+      - name: Copy librubies
+        run: |
+          mkdir -p tmp/rubies
+
+          docker run -v $PWD/tmp/rubies:/tmp/rubies --rm -it rbsys/${{ matrix.ruby-platform }}:latest \
+            cp -R /usr/local/rake-compiler/ruby /tmp/rubies
+
+      - name: Rubies
+        uses: actions/upload-artifact@v2
+        with:
+          name: rubies
+          path: tmp/rubies/**/libruby*
