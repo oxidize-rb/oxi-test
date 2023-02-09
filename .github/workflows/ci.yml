@@ -32,12 +32,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
           cargo-cache: true
-          cache-version: v1
+          cache-version: v2
 
       - name: Run ruby tests
         run: bundle exec rake

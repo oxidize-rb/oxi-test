@@ -4,9 +4,9 @@ require "oxi/test/version"
 
 begin
   RUBY_VERSION =~ /(\d+\.\d+)/
-  require "#{$1}/oxi/test/ext"
+  require "oxi/test/#{$1}/oxi_test"
 rescue LoadError
-  require "oxi/test/ext"
+  require "oxi/test/oxi_test"
 end
 
 module Oxi
