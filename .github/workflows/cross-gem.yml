@@ -49,3 +49,12 @@ jobs:
           path: pkg/*-${{ matrix.ruby-platform }}.gem
           if-no-files-found: error
           retention-days: 1
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bindings-${{ matrix.ruby-platform }}
+          path: |
+            target/**/bindings-*.rs
+            target/**/cfg-capture-*
+          if-no-files-found: error
+          retention-days: 1
