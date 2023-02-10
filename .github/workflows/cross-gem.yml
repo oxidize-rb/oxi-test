@@ -51,7 +51,7 @@ jobs:
         with:
           name: bindings-${{ matrix.ruby-platform }}
           path: |
-            target/**/bindings-*.rs
-            target/**/cfg-capture-*
+            tmp/rb-sys-dock/${{ inputs.ruby-platform }}/target/**/bindings-*.rs
+            tmp/rb-sys-dock/${{ inputs.ruby-platform }}/target/**/cfg-capture-*
           if-no-files-found: error
           retention-days: 1
