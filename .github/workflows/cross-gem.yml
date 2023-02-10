@@ -47,6 +47,15 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+      - run: |
+          echo "::group::Bindings"
+          find tmp -name "bindings*"
+          echo "::endgroup::"
+
+          echo "::group::Capture"
+          find tmp -name "cfg-capture*"
+          echo "::endgroup::"
+
       - uses: actions/upload-artifact@v3
         with:
           name: bindings-${{ matrix.ruby-platform }}
