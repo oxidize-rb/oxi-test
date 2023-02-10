@@ -48,19 +48,19 @@ jobs:
           retention-days: 1
 
       - run: |
-          echo "::group::Bindings"
-          find tmp -name "bindings*"
+          mkdir tmp/upload
+
+          echo "::group::Copy bindings"
+          find tmp -name "bindings*" -exec cp {} tmp/upload \;
           echo "::endgroup::"
 
-          echo "::group::Capture"
-          find tmp -name "cfg-capture*"
+          echo "::group::Copy cfg-capture"
+          find tmp -name "cfg-capture*" -exec cp {} tmp/upload \;
           echo "::endgroup::"
 
       - uses: actions/upload-artifact@v3
         with:
           name: bindings-${{ matrix.ruby-platform }}
           path: |
-            tmp/rb-sys-dock/${{ inputs.ruby-platform }}/target/**/bindings-*.rs
-            tmp/rb-sys-dock/${{ inputs.ruby-platform }}/target/**/cfg-capture-*
+            tmp/upload/*
           if-no-files-found: error
-          retention-days: 1
