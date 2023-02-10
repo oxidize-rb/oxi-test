@@ -47,20 +47,25 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - run: |
-          mkdir tmp/upload
+      - name: "Copy bindings and cfg-capture"
+        id: capture
+        run: |
+          outdir=tmp/upload/${{ matrix.ruby-platform }}
+          mkdir -p $outdir
 
           echo "::group::Copy bindings"
-          find tmp -name "bindings*" -exec cp {} tmp/upload \;
+          find tmp -name "bindings*" -exec cp {} $outdir \;
           echo "::endgroup::"
 
           echo "::group::Copy cfg-capture"
-          find tmp -name "cfg-capture*" -exec cp {} tmp/upload \;
+          find tmp -name "cfg-capture*" -exec cp {} $outdir \;
           echo "::endgroup::"
+
+          echo "rb-sys-version=$(bundle exec rb-sys-dock --version)" >> $GITHUB_OUTPUT
 
       - uses: actions/upload-artifact@v3
         with:
-          name: bindings-${{ matrix.ruby-platform }}
+          name: rb-sys-bindings-${{ steps.capture.outputs.rb-sys-version }}
           path: |
-            tmp/upload/*
+            tmp/upload/${{ matrix.ruby-platform }}/*
           if-no-files-found: error
