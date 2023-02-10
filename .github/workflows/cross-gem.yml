@@ -68,5 +68,5 @@ jobs:
         with:
           name: rb-sys-bindings-${{ steps.capture.outputs.rb-sys-version }}
           path: |
-            tmp/upload/${{ matrix.ruby-platform }}/*
+            tmp/upload/
           if-no-files-found: error
