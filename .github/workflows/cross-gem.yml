@@ -4,6 +4,12 @@
 name: Cross Gem
 on:
   workflow_dispatch:
+    inputs:
+      rb-sys-branch:
+        description: 'rb-sys branch to test against'
+        required: false
+        default: 'main'
+        type: string
   push:
     branches: ["main", "cross-gem/*"]
 
@@ -34,12 +40,20 @@ jobs:
       - uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.2"
-          bundler-cache: true
+
+      - name: Patch rb-sys version
+        run: |
+          mkdir -p .cargo
+          echo "[patch.crates-io]" >> .cargo/config.toml
+          echo "rb-sys = { git = \"https://github.com/oxidize-rb/rb-sys\", branch = \"${{ github.events.inputs.rb-sys-branch }}\" }" >> .cargo/config.toml
+          echo "rb-sys-env = { git = \"https://github.com/oxidize-rb/rb-sys\", branch = \"${{ github.events.inputs.rb-sys-branch }}\" }" >> .cargo/config.toml
+          sed -i "s|gem 'rb_sys', '.*'|gem 'rb_sys', github: 'oxidize-rb/rb-sys', branch: '${{ github.events.inputs.rb-sys-branch }}'|g" Gemfile
+          bundle install --jobs 4 --retry 3
+          cargo update -p rb-sys
 
       - uses: oxidize-rb/actions/cross-gem@v1
         with:
           platform: ${{ matrix.ruby-platform }}
-          cache-version: v2
 
       - uses: actions/upload-artifact@v3
         with:
@@ -55,11 +69,15 @@ jobs:
           mkdir -p $outdir
 
           echo "::group::Copy bindings"
-          find tmp -name "bindings*" -exec cp {} $outdir \;
+          find target/ -name "bindings*" -exec cp {} $outdir/artifacts \;
           echo "::endgroup::"
 
           echo "::group::Copy cfg-capture"
-          find tmp -name "cfg-capture*" -exec cp {} $outdir \;
+          find target/ -name "cfg-capture*" -exec cp {} $outdir/artifacts \;
+          echo "::endgroup::"
+
+          echo "::group::Copy Build config"
+          cp -r tmp/ $outdir/tmp
           echo "::endgroup::"
 
           echo "rb-sys-version=$(bundle exec rb-sys-dock --version)" >> $GITHUB_OUTPUT
