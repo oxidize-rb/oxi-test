@@ -10,10 +10,19 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-rb-sys = { version = "0.9", features = ["bindgen-rbimpls", "bindgen-deprecated-types"] }
+rb-sys = { version = "0.9", features = [
+  "bindgen-rbimpls",
+  "bindgen-deprecated-types",
+  "stable-api-compiled-fallback",
+] }
 
 [dev-dependencies]
-rb-sys = { version = "0.9", features = ["link-ruby", "bindgen-rbimpls", "bindgen-deprecated-types"] }
+rb-sys = { version = "0.9", features = [
+  "link-ruby",
+  "bindgen-rbimpls",
+  "bindgen-deprecated-types",
+  "stable-api-compiled-fallback",
+] }
 
 [build-dependencies]
 rb-sys-env = { version = "0.1" }
