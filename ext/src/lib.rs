@@ -80,3 +80,61 @@ mod tests {
         }
     }
 }
+
+#[cfg(feature = "jruby")]
+use std::os::raw::c_void;
+#[cfg(feature = "jruby")]
+use robusta_jni::convert::{Signature, TryFromJavaValue, TryIntoJavaValue};
+#[cfg(feature = "jruby")]
+use robusta_jni::jni::{
+    JavaVM, JNIEnv, NativeMethod, objects::{JClass, JString}, strings::JNIString,
+    sys::{jint, JNI_ERR, JNI_VERSION_1_4},
+};
+
+#[cfg(feature = "jruby")]
+extern "system" fn hello<'local>(env: JNIEnv<'local>,
+                                 _class: JClass<'local>,
+                                 name: <String as TryFromJavaValue<'local, 'local>>::Source,
+) -> <String as TryIntoJavaValue<'local>>::Target {
+    let name_res: robusta_jni::jni::errors::Result<String> = TryFromJavaValue::try_from(name, &env);
+    match name_res {
+        Ok(name_conv) => {
+            let res = format!("Hello, {}", name_conv);
+            let res_res: robusta_jni::jni::errors::Result<<String as TryIntoJavaValue>::Target> = TryIntoJavaValue::try_into(res, &env);
+            match res_res {
+                Ok(conv_res) => { return conv_res; }
+                Err(err) => {
+                    // No need to handle err, ClassNotFoundException will be thrown implicitly
+                    let _ = env.throw_new("java/lang/RuntimeException", format!("{:?}", err));
+                }
+            }
+        }
+        Err(err) => {
+            // No need to handle err, ClassNotFoundException will be thrown implicitly
+            let _ = env.throw_new("java/lang/RuntimeException", format!("{:?}", err));
+        }
+    }
+    JString::from(std::ptr::null_mut())
+}
+
+/// This function is executed on loading native library by JVM.
+/// It initializes the cache of method and class references.
+#[allow(non_snake_case)]
+#[no_mangle]
+pub extern "system" fn JNI_OnLoad<'local>(vm: JavaVM, _: *mut c_void) -> jint {
+    let Ok(env) = vm.get_env() else { return JNI_ERR; };
+    let Ok(clazz) = env.find_class(
+        "oxi/test/OxiTest"
+    ) else { return JNI_ERR; };
+    let hello_func = hello as unsafe extern "system" fn(env: JNIEnv<'local>, _class: JClass<'local>, name: JString<'local>) -> JString<'local>;
+    let hello_ptr = hello_func as *mut c_void;
+    let build_xml_method = NativeMethod {
+        name: JNIString::from("helloNative"),
+        sig: JNIString::from(format!("({}){}",
+                                     <JString as Signature>::SIG_TYPE,
+                                     <JString as Signature>::SIG_TYPE)),
+        fn_ptr: hello_ptr,
+    };
+    let Ok(_) = env.register_native_methods(clazz, &[build_xml_method]) else { return JNI_ERR; };
+    JNI_VERSION_1_4
+}
