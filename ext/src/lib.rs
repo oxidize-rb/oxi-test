@@ -82,27 +82,33 @@ mod tests {
 }
 
 #[cfg(feature = "jruby")]
-use std::os::raw::c_void;
-#[cfg(feature = "jruby")]
 use robusta_jni::convert::{Signature, TryFromJavaValue, TryIntoJavaValue};
 #[cfg(feature = "jruby")]
 use robusta_jni::jni::{
-    JavaVM, JNIEnv, NativeMethod, objects::{JClass, JString}, strings::JNIString,
+    objects::{JClass, JString},
+    strings::JNIString,
     sys::{jint, JNI_ERR, JNI_VERSION_1_4},
+    JNIEnv, JavaVM, NativeMethod,
 };
+#[cfg(feature = "jruby")]
+use std::os::raw::c_void;
 
 #[cfg(feature = "jruby")]
-extern "system" fn hello<'local>(env: JNIEnv<'local>,
-                                 _class: JClass<'local>,
-                                 name: <String as TryFromJavaValue<'local, 'local>>::Source,
+extern "system" fn hello<'local>(
+    env: JNIEnv<'local>,
+    _class: JClass<'local>,
+    name: <String as TryFromJavaValue<'local, 'local>>::Source,
 ) -> <String as TryIntoJavaValue<'local>>::Target {
     let name_res: robusta_jni::jni::errors::Result<String> = TryFromJavaValue::try_from(name, &env);
     match name_res {
         Ok(name_conv) => {
             let res = format!("Hello, {}", name_conv);
-            let res_res: robusta_jni::jni::errors::Result<<String as TryIntoJavaValue>::Target> = TryIntoJavaValue::try_into(res, &env);
+            let res_res: robusta_jni::jni::errors::Result<<String as TryIntoJavaValue>::Target> =
+                TryIntoJavaValue::try_into(res, &env);
             match res_res {
-                Ok(conv_res) => { return conv_res; }
+                Ok(conv_res) => {
+                    return conv_res;
+                }
                 Err(err) => {
                     // No need to handle err, ClassNotFoundException will be thrown implicitly
                     let _ = env.throw_new("java/lang/RuntimeException", format!("{:?}", err));
@@ -123,31 +129,42 @@ extern "system" fn hello<'local>(env: JNIEnv<'local>,
 #[allow(non_snake_case)]
 #[no_mangle]
 pub extern "system" fn JNI_OnLoad<'local>(vm: JavaVM, _: *mut c_void) -> jint {
-    let Ok(env) = vm.get_env() else { return JNI_ERR; };
-    let Ok(clazz) = env.find_class(
-        "oxi/test/OxiTest"
-    ) else { return JNI_ERR; };
-    let hello_func = hello as unsafe extern "system" fn(env: JNIEnv<'local>, _class: JClass<'local>, name: JString<'local>) -> JString<'local>;
+    let Ok(env) = vm.get_env() else {
+        return JNI_ERR;
+    };
+    let Ok(clazz) = env.find_class("oxi/test/OxiTest") else {
+        return JNI_ERR;
+    };
+    let hello_func = hello
+        as unsafe extern "system" fn(
+            env: JNIEnv<'local>,
+            _class: JClass<'local>,
+            name: JString<'local>,
+        ) -> JString<'local>;
     let hello_ptr = hello_func as *mut c_void;
     let build_xml_method = NativeMethod {
         name: JNIString::from("helloNative"),
-        sig: JNIString::from(format!("({}){}",
-                                     <JString as Signature>::SIG_TYPE,
-                                     <JString as Signature>::SIG_TYPE)),
+        sig: JNIString::from(format!(
+            "({}){}",
+            <JString as Signature>::SIG_TYPE,
+            <JString as Signature>::SIG_TYPE
+        )),
         fn_ptr: hello_ptr,
     };
-    let Ok(_) = env.register_native_methods(clazz, &[build_xml_method]) else { return JNI_ERR; };
+    let Ok(_) = env.register_native_methods(clazz, &[build_xml_method]) else {
+        return JNI_ERR;
+    };
     JNI_VERSION_1_4
 }
 
 #[cfg(feature = "jruby")]
 #[cfg(test)]
 mod tests {
+    use crate::hello;
+    use jni::objects::{JClass, JString};
+    use robusta_jni::convert::TryFromJavaValue;
     use robusta_jni::jni::{Executor, InitArgsBuilder, JavaVM};
     use std::sync::Arc;
-    use jni::objects::{JClass, JString};
-    use robusta_jni::convert::{TryFromJavaValue};
-    use crate::hello;
 
     #[test]
     fn test_simple_hello() {
@@ -155,13 +172,16 @@ mod tests {
         let jvm = Arc::new(JavaVM::new(jvm_args).unwrap());
         let exec = Executor::new(jvm);
 
-        let val: String = exec.with_attached(|env| {
-            let name = env.new_string("world")?;
-            // Too hard to load a real class and call env.call_static_method()
-            let raw_res: JString = hello(*(env), JClass::from(std::ptr::null_mut()), name);
-            let res: jni::errors::Result<String> = TryFromJavaValue::try_from(JString::from(raw_res), &env);
-            res
-        }).unwrap();
+        let val: String = exec
+            .with_attached(|env| {
+                let name = env.new_string("world")?;
+                // Too hard to load a real class and call env.call_static_method()
+                let raw_res: JString = hello(*(env), JClass::from(std::ptr::null_mut()), name);
+                let res: jni::errors::Result<String> =
+                    TryFromJavaValue::try_from(JString::from(raw_res), &env);
+                res
+            })
+            .unwrap();
 
         assert_eq!(val, "Hello, world");
     }
