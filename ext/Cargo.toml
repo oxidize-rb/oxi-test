@@ -15,6 +15,7 @@ rb-sys = { version = "0.9", features = [
   "bindgen-deprecated-types",
   "stable-api-compiled-fallback",
 ], optional = true }
+jni = { version = "*", optional = true }
 robusta_jni = { version = "0.2.2", optional = true }
 
 [build-dependencies]
@@ -24,3 +25,4 @@ rb-sys-env = { version = "0.1" }
 mri = ["dep:rb-sys"]
 mri_dev = ["mri", "rb-sys/link-ruby"]
 jruby = ["dep:robusta_jni"]
+jruby_dev = ["jruby", "jni/invocation"]

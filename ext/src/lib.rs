@@ -138,3 +138,30 @@ pub extern "system" fn JNI_OnLoad<'local>(vm: JavaVM, _: *mut c_void) -> jint {
     let Ok(_) = env.register_native_methods(clazz, &[build_xml_method]) else { return JNI_ERR; };
     JNI_VERSION_1_4
 }
+
+#[cfg(feature = "jruby")]
+#[cfg(test)]
+mod tests {
+    use robusta_jni::jni::{Executor, InitArgsBuilder, JavaVM};
+    use std::sync::Arc;
+    use jni::objects::{JClass, JString};
+    use robusta_jni::convert::{TryFromJavaValue};
+    use crate::hello;
+
+    #[test]
+    fn test_simple_hello() {
+        let jvm_args = InitArgsBuilder::new().build().unwrap();
+        let jvm = Arc::new(JavaVM::new(jvm_args).unwrap());
+        let exec = Executor::new(jvm);
+
+        let val: String = exec.with_attached(|env| {
+            let name = env.new_string("world")?;
+            // Too hard to load a real class and call env.call_static_method()
+            let raw_res: JString = hello(*(env), JClass::from(std::ptr::null_mut()), name);
+            let res: jni::errors::Result<String> = TryFromJavaValue::try_from(JString::from(raw_res), &env);
+            res
+        }).unwrap();
+
+        assert_eq!(val, "Hello, world");
+    }
+}

@@ -52,7 +52,17 @@ task :native, [:platform] do |_t, platform:|
 end
 
 task :cargo_test do
-  sh "cargo test --features #{java_p ? "jruby" : "mri_dev"}"
+  if java_p
+    env = {
+      # For libjvm.so
+      "LD_LIBRARY_PATH" => File.join(
+        java.lang.System.getProperty("java.home"), "lib", "server"
+      )
+    }
+    sh env, "cargo test --features jruby_dev"
+  else
+    sh "cargo test --features mri_dev"
+  end
 end
 
 task test: [:ruby_test, :cargo_test]

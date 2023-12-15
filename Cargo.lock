@@ -239,6 +239,7 @@ dependencies = [
 name = "oxi-test"
 version = "0.1.0"
 dependencies = [
+ "jni",
  "rb-sys",
  "rb-sys-env",
  "robusta_jni",
