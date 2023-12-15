@@ -15,8 +15,8 @@ if java_p
   Rake::JavaExtensionTask.new("oxi_test", GEMSPEC) do |ext|
     ext.lib_dir = "lib/oxi/test"
     ext.ext_dir = "ext"
-    ext.source_version = "11" # or "8"
-    ext.target_version = "11" # or "8"
+    ext.source_version = "17"
+    ext.target_version = "17"
   end
 
   Rake::Task[:compile].rename(:java_compile)
