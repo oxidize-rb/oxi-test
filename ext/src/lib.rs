@@ -117,6 +117,7 @@ extern "system" fn hello<'local>(env: JNIEnv<'local>,
     JString::from(std::ptr::null_mut())
 }
 
+#[cfg(feature = "jruby")]
 /// This function is executed on loading native library by JVM.
 /// It initializes the cache of method and class references.
 #[allow(non_snake_case)]
