@@ -53,12 +53,16 @@ end
 
 task :cargo_test do
   if java_p
-    env = {
-      # For libjvm.so
-      "LD_LIBRARY_PATH" => File.join(
-        java.lang.System.getProperty("java.home"), "lib", "server"
-      )
-    }
+    # For libjvm.so
+    lib_path = File.join(
+      java.lang.System.getProperty("java.home"), "lib", "server"
+    )
+    if Gem.win_platform?
+      env = { "PATH" => "#{ENV["PATH"]};#{lib_path}" }
+    else
+      env = { "LD_LIBRARY_PATH" => lib_path }
+    end
+
     sh env, "cargo test --features jruby_dev"
   else
     sh "cargo test --features mri_dev"
