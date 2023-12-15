@@ -21,7 +21,8 @@ Gem::Specification.new do |spec|
 
   ext_files = %w[rs rb]
   ext_files << "java" if java_p
-  spec.files = Dir["lib/**/*.rb", "ext/**/*.{#{ext_files.join(",")}}", "**/Cargo.*", "LICENSE.txt", "README.md"]
+  spec.files = Dir["lib/**/*.rb", "ext/**/*.{#{ext_files.join(",")}}",
+                   "Cargo.lock", "Cargo.toml", "ext/Cargo.toml", "LICENSE.txt", "README.md"]
   spec.bindir = "exe"
   spec.executables = []
   spec.require_paths = ["lib"]
