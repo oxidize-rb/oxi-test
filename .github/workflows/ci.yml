@@ -30,6 +30,11 @@ jobs:
           - os: windows-latest
             ruby: mswin
           - ruby: jruby-9.4.3.0
+            os: "ubuntu-latest"
+          - ruby: jruby-9.4.3.0
+            os: "macos-latest"
+          - ruby: jruby-9.4.3.0
+            os: "windows-latest"
     steps:
       - uses: actions/checkout@v3
 
