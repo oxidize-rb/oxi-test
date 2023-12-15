@@ -6,16 +6,20 @@
 //! If you do need to drop down into raw libruby, you can enable the
 //! `rb-sys-interop` feature and add `rb-sys` to you Cargo dependencies.
 
+#[cfg(feature = "mri")]
 use rb_sys::{
     rb_define_module, rb_define_module_under, rb_define_singleton_method, rb_str_buf_append,
     rb_utf8_str_new_cstr, VALUE,
 };
+#[cfg(feature = "mri")]
 use std::{ffi::CString, intrinsics::transmute, os::raw::c_char};
 
+#[cfg(feature = "mri")]
 trait AsCStr {
     fn to_cstring(&self) -> *const c_char;
 }
 
+#[cfg(feature = "mri")]
 impl AsCStr for str {
     /// Convert a Rust string to a C string.
     fn to_cstring(&self) -> *const c_char {
@@ -23,10 +27,12 @@ impl AsCStr for str {
     }
 }
 
+#[cfg(feature = "mri")]
 unsafe extern "C" fn hello(_: VALUE, name: VALUE) -> VALUE {
     rb_str_buf_append(rb_utf8_str_new_cstr("Hello, ".to_cstring()), name)
 }
 
+#[cfg(feature = "mri")]
 #[no_mangle]
 unsafe extern "C" fn Init_oxi_test() {
     let oxi_module = rb_define_module("Oxi".to_cstring());
@@ -42,6 +48,7 @@ unsafe extern "C" fn Init_oxi_test() {
     );
 }
 
+#[cfg(feature = "mri")]
 #[cfg(test)]
 mod tests {
     use crate::{AsCStr, Init_oxi_test};

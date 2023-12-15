@@ -14,15 +14,13 @@ rb-sys = { version = "0.9", features = [
   "bindgen-rbimpls",
   "bindgen-deprecated-types",
   "stable-api-compiled-fallback",
-] }
-
-[dev-dependencies]
-rb-sys = { version = "0.9", features = [
-  "link-ruby",
-  "bindgen-rbimpls",
-  "bindgen-deprecated-types",
-  "stable-api-compiled-fallback",
-] }
+], optional = true }
+robusta_jni = { version = "0.2.2", optional = true }
 
 [build-dependencies]
 rb-sys-env = { version = "0.1" }
+
+[features]
+mri = ["dep:rb-sys"]
+mri_dev = ["mri", "rb-sys/link-ruby"]
+jruby = ["dep:robusta_jni"]

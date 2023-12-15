@@ -6,7 +6,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     //
     // This is not a requirement, but it is a convenient if you want to use
     // `cargo test`, etc.
-    rb_sys_env::activate()?;
-
+    #[cfg(feature = "mri")]
+    {
+        rb_sys_env::activate()?;
+    }
     Ok(())
 }
