@@ -46,11 +46,12 @@ jobs:
           java-version: '21'
 
       - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+        continue-on-error: true
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
           cargo-cache: true
-          cache-version: v2-tmp
+          cache-version: v2
 
       - name: Debug session
         uses: mxschmitt/action-tmate@v3
