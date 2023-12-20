@@ -45,7 +45,7 @@ jobs:
           distribution: 'microsoft'
           java-version: '21'
 
-      - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+      - uses: uvlad7/oxidize-rb-actions/setup-ruby-and-rust@main
         continue-on-error: true
         with:
           ruby-version: ${{ matrix.ruby }}
