@@ -54,14 +54,19 @@ end
 task :cargo_test do
   if java_p
     java_home = java.lang.System.getProperty("java.home")
-    lib_path = [
-      File.join(java_home, "lib", "server"), # For libjvm.so
-      File.join(java_home, "lib"), # For libjli.dylib
-    ]
     if Gem.win_platform?
-      env = { "PATH" => "#{ENV["PATH"]};#{lib_path.join(";")}" }
+      bin_path = [
+        File.join(java_home, "bin", "server"),
+        File.join(java_home, "bin"),
+      ]
+      env = { "PATH" => "#{ENV["PATH"]};#{bin_path.join(";")}" }
     else
-      env = { "LD_LIBRARY_PATH" => lib_path.join(":"), "DYLD_LIBRARY_PATH" => lib_path.join(":") }
+      lib_path = [
+        File.join(java_home, "lib", "server"), # For libjvm.so
+        File.join(java_home, "lib"), # For libjli.dylib
+      ]
+      var_name = RUBY_PLATFORM =~ /darwin/ ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH"
+      env = { var_name => "#{ENV[var_name]}:#{lib_path.join(":")}" }
     end
 
     sh env, "cargo test --features jruby_dev"
