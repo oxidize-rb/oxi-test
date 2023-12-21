@@ -42,8 +42,8 @@ jobs:
       - uses: actions/setup-java@v4
         if: startsWith( matrix.ruby, 'jruby')
         with:
-          distribution: 'microsoft'
-          java-version: '21'
+          distribution: 'temurin'
+          java-version: '17'
 
       - uses: uvlad7/oxidize-rb-actions/setup-ruby-and-rust@main
         continue-on-error: true
