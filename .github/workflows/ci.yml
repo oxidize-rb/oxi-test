@@ -53,9 +53,6 @@ jobs:
           cargo-cache: true
           cache-version: v2
 
-      - name: Debug session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Run ruby tests
         run: bundle exec rake
 
