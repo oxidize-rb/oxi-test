@@ -65,7 +65,7 @@ task :cargo_test do
         File.join(java_home, "lib", "server"), # For libjvm.so
         File.join(java_home, "lib"), # For libjli.dylib
       ]
-      var_name = RUBY_PLATFORM =~ /darwin/ ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH"
+      var_name = RbConfig::MAKEFILE_CONFIG["RUBY_PLATFORM"] =~ /darwin/ ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH"
       env = { var_name => "#{ENV[var_name]}:#{lib_path.join(":")}" }
     end
 
