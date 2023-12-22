@@ -13,3 +13,7 @@
 mkmf.log
 target/
 Gemfile.lock
+*.jar
+.rake_tasks~
+.idea/
+*.iml

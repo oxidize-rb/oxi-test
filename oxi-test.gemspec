@@ -2,6 +2,8 @@
 
 require_relative "lib/oxi/test/version"
 
+java_p = RUBY_PLATFORM.include?("java")
+
 Gem::Specification.new do |spec|
   spec.name = "oxi-test"
   spec.version = Oxi::Test::VERSION
@@ -17,7 +19,10 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = spec.homepage
   spec.required_ruby_version = ">= 2.3.0"
 
-  spec.files = Dir["lib/**/*.rb", "ext/**/*.{rs,rb}", "**/Cargo.*", "LICENSE.txt", "README.md"]
+  ext_files = %w[rs rb]
+  ext_files << "java" if java_p
+  spec.files = Dir["lib/**/*.rb", "ext/**/*.{#{ext_files.join(",")}}",
+                   "Cargo.lock", "Cargo.toml", "ext/Cargo.toml", "LICENSE.txt", "README.md"]
   spec.bindir = "exe"
   spec.executables = []
   spec.require_paths = ["lib"]
