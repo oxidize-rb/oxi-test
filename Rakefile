@@ -46,27 +46,37 @@ Rake::TestTask.new(:ruby_test) do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
+task ruby_test: [:compile]
+
 desc "Build native extension for a given platform (i.e. `rake 'native[x86_64-linux]'`)"
 task :native, [:platform] do |_t, platform:|
   sh "bundle", "exec", "rb-sys-dock", "--platform", platform, "--build"
 end
 
-task :cargo_test do
+task :cargo_test, [:compile] do
   if java_p
     java_home = java.lang.System.getProperty("java.home")
+    class_path = [
+      ENV["CLASSPATH"],
+      File.join(RbConfig::CONFIG["libdir"], RbConfig::CONFIG["LIBRUBY"]), # jruby.jar
+      File.join(
+        File.absolute_path(File.dirname(__FILE__)),
+        "lib", "oxi", "test", "oxi_test.jar"
+      )
+    ]
     if Gem.win_platform?
       bin_path = [
         File.join(java_home, "bin", "server"),
         File.join(java_home, "bin"),
       ]
-      env = { "PATH" => "#{ENV["PATH"]};#{bin_path.join(";")}" }
+      env = { "PATH" => "#{ENV["PATH"]};#{bin_path.join(";")}", "CLASSPATH" => class_path.join(";") }
     else
       lib_path = [
         File.join(java_home, "lib", "server"), # For libjvm.so
         File.join(java_home, "lib"), # For libjli.dylib
       ]
       var_name = RbConfig::MAKEFILE_CONFIG["RUBY_PLATFORM"] =~ /darwin/ ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH"
-      env = { var_name => "#{ENV[var_name]}:#{lib_path.join(":")}" }
+      env = { var_name => "#{ENV[var_name]}:#{lib_path.join(":")}", "CLASSPATH" => class_path.join(":") }
     end
 
     sh env, "cargo test --features jruby_dev"
