@@ -7,7 +7,7 @@ import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 
 @SuppressWarnings("serial")
-@JRubyModule(name = "Xml")
+@JRubyModule(name = "OxiTest")
 public class OxiTest {
 
     private static native String helloNative(String name);
