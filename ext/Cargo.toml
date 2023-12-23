@@ -15,7 +15,7 @@ rb-sys = { version = "0.9", features = [
   "bindgen-deprecated-types",
   "stable-api-compiled-fallback",
 ], optional = true }
-jni = { version = "*", optional = true }
+jni = { version = "0.19.0", optional = true }
 robusta_jni = { version = "0.2.2", optional = true }
 
 [build-dependencies]
