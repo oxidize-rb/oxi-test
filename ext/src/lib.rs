@@ -142,7 +142,7 @@ pub extern "system" fn JNI_OnLoad<'local>(vm: JavaVM, _: *mut c_void) -> jint {
             name: JString<'local>,
         ) -> JString<'local>;
     let hello_ptr = hello_func as *mut c_void;
-    let build_xml_method = NativeMethod {
+    let hello_method = NativeMethod {
         name: JNIString::from("helloNative"),
         sig: JNIString::from(format!(
             "({}){}",
@@ -151,7 +151,7 @@ pub extern "system" fn JNI_OnLoad<'local>(vm: JavaVM, _: *mut c_void) -> jint {
         )),
         fn_ptr: hello_ptr,
     };
-    let Ok(_) = env.register_native_methods(clazz, &[build_xml_method]) else {
+    let Ok(_) = env.register_native_methods(clazz, &[hello_method]) else {
         return JNI_ERR;
     };
     JNI_VERSION_1_4
