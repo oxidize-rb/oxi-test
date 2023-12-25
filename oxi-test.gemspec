@@ -20,7 +20,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.3.0"
 
   ext_files = %w[rs rb]
-  ext_files << "java" if java_p
   lib_files = %w[rb]
   lib_files << "jar" if java_p
   spec.files = Dir["lib/**/*.{#{lib_files.join(",")}}", "ext/**/*.{#{ext_files.join(",")}}",
