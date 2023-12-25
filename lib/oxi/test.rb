@@ -9,6 +9,8 @@ rescue LoadError
   require "oxi/test/oxi_test"
 end
 
+require "oxi/test/jruby" if RUBY_PLATFORM.include?("java")
+
 module Oxi
   module Test
     class Error < StandardError; end

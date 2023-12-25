@@ -3,4 +3,8 @@
 require "mkmf"
 require "rb_sys/mkmf"
 
-create_rust_makefile("oxi/test/oxi_test")
+java_p = RUBY_PLATFORM.include?("java")
+
+create_rust_makefile("oxi/test/oxi_test") do |r|
+  r.features = java_p ? %w[jruby] : %w[mri]
+end
