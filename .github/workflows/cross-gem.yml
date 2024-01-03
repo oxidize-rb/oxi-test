@@ -37,6 +37,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Vars
+        id: vars
+        run: |
+          if [[ "${{ inputs.rb-sys-branch }}" == "" ]]; then
+            echo "rb_sys_branch=main" >> $GITHUB_OUTPUT
+          else
+            echo "rb_sys_branch=${{ inputs.rb-sys-branch }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Patch rb-sys version
         id: patch
         if: ${{ inputs.rb-sys-branch }}
@@ -48,12 +57,6 @@ jobs:
           sed -i "s|gem 'rb_sys', '.*'|gem 'rb_sys', github: 'oxidize-rb/rb-sys', branch: '${{ inputs.rb-sys-branch }}'|g" Gemfile
           cargo update -p rb-sys
 
-          if [[ "${{ inputs.rb-sys-branch }}" == "" ]]; then
-            echo "rb_sys_branch=main" >> $GITHUB_OUTPUT
-          else
-            echo "rb_sys_branch=${{ inputs.rb-sys-branch }}" >> $GITHUB_OUTPUT
-          fi
-
       - uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.2"
@@ -62,7 +65,7 @@ jobs:
       - uses: oxidize-rb/actions/cross-gem@v1
         with:
           platform: ${{ matrix.ruby-platform }}
-          tag: ${{ steps.patch.outputs.rb_sys_branch }}
+          tag: ${{ steps.vars.outputs.rb_sys_branch }}
 
       - uses: actions/upload-artifact@v3
         with:
