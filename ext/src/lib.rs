@@ -10,31 +10,27 @@ use rb_sys::{
     rb_define_module, rb_define_module_under, rb_define_singleton_method, rb_str_buf_append,
     rb_utf8_str_new_cstr, VALUE,
 };
-use std::{ffi::CString, intrinsics::transmute, os::raw::c_char};
+use std::{intrinsics::transmute, os::raw::c_char};
 
-trait AsCStr {
-    fn to_cstring(&self) -> *const c_char;
-}
-
-impl AsCStr for str {
-    /// Convert a Rust string to a C string.
-    fn to_cstring(&self) -> *const c_char {
-        CString::new(self).unwrap().into_raw()
-    }
+// Converts a static &str to a C string usable in foreign functions.
+macro_rules! static_cstring {
+    ($string:expr) => {{
+        concat!($string, "\0").as_ptr() as *const c_char
+    }};
 }
 
 unsafe extern "C" fn hello(_: VALUE, name: VALUE) -> VALUE {
-    rb_str_buf_append(rb_utf8_str_new_cstr("Hello, ".to_cstring()), name)
+    rb_str_buf_append(rb_utf8_str_new_cstr(static_cstring!("Hello, ")), name)
 }
 
 #[no_mangle]
 unsafe extern "C" fn Init_oxi_test() {
-    let oxi_module = rb_define_module("Oxi".to_cstring());
-    let oxi_test_module = rb_define_module_under(oxi_module, "Test".to_cstring());
+    let oxi_module = rb_define_module(static_cstring!("Oxi"));
+    let oxi_test_module = rb_define_module_under(oxi_module, static_cstring!("Test"));
 
     rb_define_singleton_method(
         oxi_test_module,
-        "hello".to_cstring(),
+        static_cstring!("hello"),
         Some(transmute::<unsafe extern "C" fn(VALUE, VALUE) -> VALUE, _>(
             hello,
         )),
@@ -44,7 +40,7 @@ unsafe extern "C" fn Init_oxi_test() {
 
 #[cfg(test)]
 mod tests {
-    use crate::{AsCStr, Init_oxi_test};
+    use crate::{Init_oxi_test};
     use std::os::raw::c_char;
 
     // By default, Cargo will run tests in parallel. This *will* segfault the
@@ -63,7 +59,7 @@ mod tests {
 
             Init_oxi_test();
 
-            let mut result = rb_sys::rb_eval_string("Oxi::Test.hello('world')".to_cstring());
+            let mut result = rb_sys::rb_eval_string(static_cstring!("Oxi::Test.hello('world')"));
             let result = rb_sys::rb_string_value_cstr(&mut result);
             let result = std::ffi::CStr::from_ptr(result).to_str().unwrap();
 
