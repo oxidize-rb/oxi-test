@@ -40,7 +40,7 @@ unsafe extern "C" fn Init_oxi_test() {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Init_oxi_test};
+    use crate::Init_oxi_test;
     use std::os::raw::c_char;
 
     // By default, Cargo will run tests in parallel. This *will* segfault the
