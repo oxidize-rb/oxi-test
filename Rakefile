@@ -2,6 +2,7 @@
 
 require 'bundler/gem_tasks'
 require 'rb_sys/extensiontask'
+require "minitest/test_task"
 
 GEMSPEC = Gem::Specification.load('oxi-test.gemspec') || abort('Could not load oxi-test.gemspec')
 
@@ -9,9 +10,7 @@ RbSys::ExtensionTask.new('oxi-test', GEMSPEC) do |ext|
   ext.lib_dir = 'lib/oxi/test'
 end
 
-task :ruby_test do
-  sh('bin/test', '--reporter', 'spec')
-end
+Minitest::TestTask.create :ruby_test
 
 task :fmt do
   sh 'cargo', 'fmt'
