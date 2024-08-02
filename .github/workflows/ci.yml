@@ -40,7 +40,7 @@ jobs:
           cache-version: v2
 
       - name: Run ruby tests
-        run: bundle exec rake
+        run: bundle exec rake compile && bundle exec ruby -rminitest/autorun -Itest test/oxi/test_test.rb
 
       - name: Lint rust
         run: cargo clippy && cargo fmt --check
