@@ -5,12 +5,14 @@
 //
 //! If you do need to drop down into raw libruby, you can enable the
 //! `rb-sys-interop` feature and add `rb-sys` to you Cargo dependencies.
+//!
+//! 👉 Read the docs: https://oxidize-rb.github.io/rb-sys/
 
 use rb_sys::{
     rb_define_module, rb_define_module_under, rb_define_singleton_method, rb_str_buf_append,
     rb_utf8_str_new_cstr, VALUE,
 };
-use std::{intrinsics::transmute, os::raw::c_char};
+use std::{mem::transmute, os::raw::c_char};
 
 // Converts a static &str to a C string usable in foreign functions.
 macro_rules! static_cstring {
@@ -31,9 +33,10 @@ unsafe extern "C" fn Init_oxi_test() {
     rb_define_singleton_method(
         oxi_test_module,
         static_cstring!("hello"),
-        Some(transmute::<unsafe extern "C" fn(VALUE, VALUE) -> VALUE, _>(
-            hello,
-        )),
+        Some(transmute::<
+            unsafe extern "C" fn(VALUE, VALUE) -> VALUE,
+            unsafe extern "C" fn() -> VALUE,
+        >(hello)),
         1,
     );
 }

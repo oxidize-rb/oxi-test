@@ -25,4 +25,4 @@ rb-sys = { version = "0.9", features = [
 ] }
 
 [build-dependencies]
-rb-sys-env = { version = "0.1" }
+rb-sys-env = { version = "0.2" }
